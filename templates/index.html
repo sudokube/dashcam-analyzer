@@ -10,6 +10,69 @@
         <link rel="icon" type="image/x-icon" href="../static/assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script>
+            function displaySelectedFiles() {
+                const fileContainer = document.getElementById('fileContainer');
+                const fileInput = document.getElementById('browse');
+
+                fileContainer.innerHTML = '';
+
+                for (let i = 0; i < fileInput.files.length; ++i) {
+                    const selectedFile = fileInput.files[i];
+                    const listItem = document.createElement('div');
+
+                    listItem.textContent = selectedFile.name;
+                    fileContainer.appendChild(listItem);
+
+                    const convertBtn = document.createElement('button');
+                    convertBtn.textContent = 'Convert';
+                    convertBtn.onclick = function() {
+                        convertFile(selectedFile, progressBar);
+                    };
+                    listItem.appendChild(convertBtn);
+
+                    const progressBar = document.createElement('progress');
+                    progressBar.max = 100;
+                    progressBar.value = 0;
+                    fileContainer.appendChild(progressBar);
+                }
+
+                fileContainer.style.display = 'block';
+            }
+            function convertFile(file, progressBar) {
+                // Create a FormData object to store the file
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Create an XMLHttpRequest object
+                const xhr = new XMLHttpRequest();
+
+                // Configure it to send a POST request to the server
+                xhr.open('POST', '/upload', true);
+
+                // Set up an event listener to track the progress of the upload
+                xhr.upload.onprogress = function (event) {
+                    if (event.lengthComputable) {
+                        var percentComplete = (event.loaded / event.total) * 100;
+                        // Update the progress bar value
+                        progressBar.value = percentComplete;
+                    }
+                };
+
+                // Set up an event listener for when the upload is complete
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        console.log('File uploaded successfully');
+                        // Optionally handle the response from the server
+                    } else {
+                        console.error('File upload failed. Status: ' + xhr.status);
+                    }
+                };
+
+                // Send the FormData object (containing the file) to the server
+                xhr.send(formData);
+            }
+        </script>
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
@@ -41,11 +104,17 @@
             <div class="container">
                 <div class="masthead-subheading">Welcome To Our Studio!</div>
                 <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
-                <form action="" enctype="multipart/form-data" method="post">
+
+                <!-- Container to display selected file and Convert button -->
+                <div id="fileContainer"></div>
+
+
+
+                <form action="/upload" enctype="multipart/form-data" method="post">
                     <label for="browse">
                         <div class="btn btn-primary btn-xl text-uppercase">UPLOAD</div>
                     </label>
-                    <input type="file" id="browse" style="display: none;">
+                    <input type="file" multiple id="browse" style="display: none;" onchange="displaySelectedFiles()">
                 </form>
             </div>
         </header>
