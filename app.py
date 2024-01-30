@@ -26,7 +26,7 @@ def upload():
         project_path = './download'
         weights_path = './modules/going/runs/train/exp12/weights/best.pt'
 
-        command = f'python {module_path} --project {project_path} --source {file_path} --weights {weights_path}'
+        command = f'python {module_path} --project {project_path} --source {file_path[:-4] + "P4.mp4"} --weights {weights_path}'
         subprocess.run(command, shell=True)
 
 
