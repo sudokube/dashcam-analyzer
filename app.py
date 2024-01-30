@@ -20,8 +20,10 @@ def upload():
         file_path = f'./upload/{str(uuid.uuid4()) + ".mp4"}'
         uploaded_file.save(file_path)
 
+        subprocess.run(['python', './modules/lane/P4.py', file_path])
+
         module_path = './modules/going/detect.py'
-        project_path = './temp'
+        project_path = './download'
         weights_path = './modules/going/runs/train/exp12/weights/best.pt'
 
         command = f'python {module_path} --project {project_path} --source {file_path} --weights {weights_path}'
