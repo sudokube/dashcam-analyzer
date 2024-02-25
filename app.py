@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():  # put application's code here
-    return render_template("index.html")
+    return render_template('index.html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -22,7 +22,8 @@ def upload():
     uploaded_file = request.files['file']
 
     if uploaded_file.filename != '':
-        file_path = f'./upload/{str(uuid.uuid4())}.mp4'
+        file_id = str(uuid.uuid4())
+        file_path = f'./upload/{file_id}.mp4'
         uploaded_file.save(file_path)
 
         subprocess.run(['python', './modules/lane/P4.py', file_path])
@@ -83,6 +84,12 @@ def upload():
                                 break
                 else:
                     idx += 1
+        return file_id
+
+
+@app.route('/subclips')
+def subclips():
+    return render_template('subclips.html')
 
 
 if __name__ == '__main__':
