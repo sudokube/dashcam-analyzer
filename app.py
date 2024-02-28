@@ -3,9 +3,11 @@ import pickle
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import send_file
 from moviepy.editor import VideoFileClip
 
 import cv2
+import os
 import subprocess
 import uuid
 
@@ -87,9 +89,17 @@ def upload():
         return file_id
 
 
-@app.route('/subclips')
+@app.route('/subclips', methods=['GET'])
 def subclips():
-    return render_template('subclips.html')
+    uuid = request.args.get('resp')
+
+    subclips = [f'video/{f}' for f in os.listdir('./upload') if f.startswith(f'{uuid}_subclip_') and f.endswith('mp4')]
+    return render_template('subclips.html', subclips=subclips)
+
+
+@app.route('/video/<subclip>')
+def video(subclip):
+    return send_file('upload/' + subclip)
 
 
 if __name__ == '__main__':

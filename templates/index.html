@@ -35,7 +35,7 @@
                 xhr.onload = function () {
                     if (xhr.status === 200) {
                         console.log('File uploaded successfully');
-                        window.location.href = '/subclips?response=' + xhr.responseText;
+                        window.location.href = '/subclips?resp=' + xhr.responseText;
                     } else {
                         console.error('File upload failed. Status: ' + xhr.status);
                     }
